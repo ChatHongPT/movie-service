@@ -1,10 +1,12 @@
-name: Node.js CI and Deploy
+name: Node.js Build and Deploy Workflow
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - "main"
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - "main"
 
 permissions:
   id-token: write
@@ -14,31 +16,44 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         node-version: [20.x]
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
+      # 1. 코드 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Node.js 설정
+      - name: Configure Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build --if-present
-      
-      - name: Upload artifact for deployment
-        if: github.ref == 'refs/heads/main'
+          cache: npm
+
+      # 3. 종속성 설치 및 빌드
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build --if-present
+
+      # 4. 빌드 결과물을 업로드
+      - name: Upload build artifacts
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./build 
+          path: ./build
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+
+    if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
-      - name: Deploy to GitHub Pages
+      # 1. GitHub Pages에 배포
+      - name: Publish to GitHub Pages
         uses: actions/deploy-pages@v4
