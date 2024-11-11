@@ -1,0 +1,36 @@
+.home {
+  display: block;
+}
+
+html,
+body {
+  overflow-y: scroll !important;
+  background-color: #141414 !important;
+}
+
+.banner {
+  margin-bottom: 20px;
+  text-align: center;
+  color: white;
+}
+
+.movie-row {
+  margin-bottom: 30px;
+}
+
+.movies {
+  display: flex;
+  gap: 10px;
+}
+
+.movie img {
+  width: 150px;
+  height: auto;
+  border-radius: 5px;
+}
+
+.movie p {
+  text-align: center;
+  color: white;
+  font-size: 14px;
+}
